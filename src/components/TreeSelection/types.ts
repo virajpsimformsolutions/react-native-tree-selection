@@ -70,19 +70,23 @@ export interface ChildItemTypes {
   onPressCheckbox: (item: TreeDataTypes) => void;
   titleKey: string;
   onChildPress: (item: TreeDataTypes) => void;
-  renderIcon: (isSelected: boolean, type?: string, renderSelect?: JSX.Element,
+  renderIcon: (
+    isSelected: boolean,
+    type?: string,
+    renderSelect?: JSX.Element,
     renderUnSelect?: JSX.Element,
     renderArrowOpen?: JSX.Element,
     renderArrowClosed?: JSX.Element,
     rightIconStyles?: StyleProp<ImageStyle>,
-    leftIconStyles?: StyleProp<ImageStyle>) => JSX.Element;
+    leftIconStyles?: StyleProp<ImageStyle>
+  ) => JSX.Element;
   touchableActiveOpacity: number;
   renderSelect?: JSX.Element;
   renderUnSelect?: JSX.Element;
-    renderArrowOpen?: JSX.Element;
-    renderArrowClosed?: JSX.Element;
-    rightIconStyles?: StyleProp<ImageStyle>;
-    leftIconStyles?: StyleProp<ImageStyle>;
+  renderArrowOpen?: JSX.Element;
+  renderArrowClosed?: JSX.Element;
+  rightIconStyles?: StyleProp<ImageStyle>;
+  leftIconStyles?: StyleProp<ImageStyle>;
 }
 
 export interface ParentItemTypes {
@@ -91,21 +95,25 @@ export interface ParentItemTypes {
   parentTextStyles: StyleProp<TextStyle>;
   onPressCheckbox: (item: TreeDataTypes) => void;
   showChildren: (item: TreeDataTypes) => void;
-  renderIcon: (isSelected: boolean, type?: string, renderSelect?: JSX.Element,
+  renderIcon: (
+    isSelected: boolean,
+    type?: string,
+    renderSelect?: JSX.Element,
     renderUnSelect?: JSX.Element,
     renderArrowOpen?: JSX.Element,
     renderArrowClosed?: JSX.Element,
     rightIconStyles?: StyleProp<ImageStyle>,
-    leftIconStyles?: StyleProp<ImageStyle>) => JSX.Element;
+    leftIconStyles?: StyleProp<ImageStyle>
+  ) => JSX.Element;
   titleKey: string;
   childKey: string;
   touchableActiveOpacity: number;
   renderSelect?: JSX.Element;
   renderUnSelect?: JSX.Element;
-    renderArrowOpen?: JSX.Element;
-    renderArrowClosed?: JSX.Element;
-    rightIconStyles?: StyleProp<ImageStyle>;
-    leftIconStyles?: StyleProp<ImageStyle>;
+  renderArrowOpen?: JSX.Element;
+  renderArrowClosed?: JSX.Element;
+  rightIconStyles?: StyleProp<ImageStyle>;
+  leftIconStyles?: StyleProp<ImageStyle>;
 }
 
 export interface TreeSelectHookTypes {

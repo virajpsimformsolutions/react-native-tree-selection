@@ -198,7 +198,7 @@ const TreeSelect = ({
       return renderTree({ item });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [refresh]
   );
 
   const renderTree = useCallback(

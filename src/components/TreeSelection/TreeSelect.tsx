@@ -180,14 +180,11 @@ const TreeSelect = ({
    *               All the styling between @children and @parent goes here.
    */
 
-  const renderItem = useCallback(
-    ({ item }: any) => {
+  const renderItem = ({ item }: any) => {
       return renderTree({ item });
-    },
-    [refresh]
-  );
+  };
 
-  const renderTree = useCallback(({ item }: { item: TreeDataTypes }) => {
+  const renderTree = ({ item }: { item: TreeDataTypes }) => {
     if (isUndefined(item.isExpanded)) {
       item.isExpanded = false;
     }
@@ -243,7 +240,7 @@ const TreeSelect = ({
         )}
       </>
     );
-  }, [refresh]);
+  };
 
   /**
    * This is the return function which renders the JSX.

@@ -25,7 +25,7 @@ const CustomImage = React.memo(({ source, style }: CustomImageProps) => {
   return <Image source={source} style={[styles.iconView, style]} />;
 });
 
-const ParentItem = React.memo(
+const ParentItem = (
   ({
     item,
     parentContainerStyles,
@@ -66,7 +66,7 @@ const ParentItem = React.memo(
   )
 );
 
-const ChildItem = React.memo(
+const ChildItem = (
   ({
     item,
     childContainerStyles,

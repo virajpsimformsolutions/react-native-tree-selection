@@ -1,5 +1,5 @@
 import { cloneDeep, isNull, isObject } from 'lodash';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { StaticData } from '../../constants';
 import type { TreeDataTypes, TreeSelectHookTypes } from './types';
 
@@ -93,13 +93,13 @@ const useTreeSelect = ({
    *
    * It will manipulate the @boolean isExpanded key.
    */
-  const showChildren = (item: TreeDataTypes) => {
+  const showChildren = useCallback((item: TreeDataTypes) => {
     item.isExpanded = !item?.isExpanded;
     onParentPress(item);
     reload();
-  };
+  },[refresh]);
 
-  const onPressCheckbox = (item: TreeDataTypes) => {
+  const onPressCheckbox = useCallback((item: TreeDataTypes) => {
     if (!item?.isSelected && autoExpandable) {
       item.isExpanded = !item?.isSelected;
     }
@@ -109,7 +109,7 @@ const useTreeSelect = ({
       onSelectOrUnselect(item, false);
     }
     onCheckBoxPress(selectItem);
-  };
+  }, [refresh]);
 
   return {
     selectAll,

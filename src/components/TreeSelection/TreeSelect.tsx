@@ -21,9 +21,9 @@ import type {
 } from './types';
 import useTreeSelect from './useTreeSelect';
 
-const CustomImage = ({ source, style }: CustomImageProps) => {
+const CustomImage = React.memo(({ source, style }: CustomImageProps) => {
   return <Image source={source} style={[styles.iconView, style]} />;
-};
+});
 
 const ParentItem = React.memo(
   ({
@@ -36,6 +36,12 @@ const ParentItem = React.memo(
     titleKey,
     childKey,
     touchableActiveOpacity,
+    renderSelect,
+  renderUnSelect,
+  renderArrowOpen,
+  renderArrowClosed,
+  rightIconStyles,
+  leftIconStyles
   }: ParentItemTypes) => (
     <View style={styles.renderContainer}>
       <TouchableOpacity
@@ -50,7 +56,12 @@ const ParentItem = React.memo(
             onPressCheckbox(item);
           }}
           style={styles.chevronContainer}>
-          {renderIcon(item?.isSelected ?? false, 'child')}
+          {renderIcon(item?.isSelected ?? false, 'child', renderSelect,
+  renderUnSelect,
+  renderArrowOpen,
+  renderArrowClosed,
+  rightIconStyles,
+  leftIconStyles)}
         </TouchableOpacity>
         <Text style={[styles.text, parentTextStyles]}>
           {item[titleKey] as string}
@@ -76,6 +87,12 @@ const ChildItem = React.memo(
     onChildPress,
     renderIcon,
     touchableActiveOpacity,
+    renderSelect,
+  renderUnSelect,
+  renderArrowOpen,
+  renderArrowClosed,
+  rightIconStyles,
+  leftIconStyles
   }: ChildItemTypes) => (
     <TouchableOpacity
       activeOpacity={touchableActiveOpacity}
@@ -89,7 +106,12 @@ const ChildItem = React.memo(
         }}
         testID={`${item[titleKey]}-press`}
         style={styles.chevronContainer}>
-        {renderIcon(item?.isSelected ?? false, 'child')}
+        {renderIcon(item?.isSelected ?? false, 'child',renderSelect,
+  renderUnSelect,
+  renderArrowOpen,
+  renderArrowClosed,
+  rightIconStyles,
+  leftIconStyles)}
       </TouchableOpacity>
       <Text style={[styles.text, childTextStyles]}>
         {item[titleKey] as string}
@@ -98,13 +120,43 @@ const ChildItem = React.memo(
   )
 );
 
+const renderIcon = React.memo((
+  status: boolean,
+  type: string = 'parent',
+  renderSelect: any,
+  renderUnSelect: any,
+  renderArrowOpen: any,
+  renderArrowClosed: any,
+  rightIconStyles: any,
+  leftIconStyles: any
+): JSX.Element => {
+  const isChild: boolean = type === 'child';
+  let selectIcon: { custom: JSX.Element | undefined; default: number };
+
+  if (isChild) {
+    selectIcon = status
+      ? { custom: renderSelect, default: Icons.checkboxChecked }
+      : { custom: renderUnSelect, default: Icons.checkboxUnchecked };
+  } else {
+    selectIcon = status
+      ? { custom: renderArrowOpen, default: Icons.open }
+      : { custom: renderArrowClosed, default: Icons.close };
+  }
+
+  if (React.isValidElement(selectIcon.custom)) {
+    return selectIcon.custom;
+  }
+
+  const iconStyle = isChild ? rightIconStyles : leftIconStyles;
+  return <CustomImage source={selectIcon.default} style={iconStyle} />;
+});
+
+
 const TreeSelect = ({
   data,
   onParentPress = (_value: {}) => {},
   onChildPress = (_value: {}) => {},
   onCheckBoxPress = ([]) => {},
-  leftIconStyles,
-  rightIconStyles,
   parentContainerStyles,
   childContainerStyles,
   parentTextStyles,
@@ -118,6 +170,8 @@ const TreeSelect = ({
   renderArrowClosed,
   renderSelect,
   renderUnSelect,
+  leftIconStyles,
+  rightIconStyles,
   touchableActiveOpacity = 0.7,
   flatListProps,
 }: TreeSelectTypes) => {
@@ -140,32 +194,8 @@ const TreeSelect = ({
     isEqual(childKey, titleKey) && console.warn(Strings.samePropsError);
   }, [childKey, titleKey]);
 
-  const renderIcon = (
-    status: boolean,
-    type: string = 'parent'
-  ): JSX.Element => {
-    const isChild: boolean = type === 'child';
-    let selectIcon: { custom: JSX.Element | undefined; default: number };
 
-    if (isChild) {
-      selectIcon = status
-        ? { custom: renderSelect, default: Icons.checkboxChecked }
-        : { custom: renderUnSelect, default: Icons.checkboxUnchecked };
-    } else {
-      selectIcon = status
-        ? { custom: renderArrowOpen, default: Icons.open }
-        : { custom: renderArrowClosed, default: Icons.close };
-    }
-
-    if (React.isValidElement(selectIcon.custom)) {
-      return selectIcon.custom;
-    }
-
-    const iconStyle = isChild ? rightIconStyles : leftIconStyles;
-    return <CustomImage source={selectIcon.default} style={iconStyle} />;
-  };
-
-  /**
+/**
    * This is Render tree @RecursiveFunction which calls itself if found any children.
    * @FlatList is used to re-render the tree.
    * This @FlatList is divided into 3 Parts:
@@ -179,68 +209,81 @@ const TreeSelect = ({
    *    Part III - If any @Item having children's will call the @RecursiveFunction and re-render FlatList.
    *               All the styling between @children and @parent goes here.
    */
-  const renderTree = ({ item }: { item: TreeDataTypes }) => {
-    if (isUndefined(item.isExpanded)) {
-      item.isExpanded = false;
-    }
+const renderTree =  ({ item }: { item: TreeDataTypes }) => {
+  if (isUndefined(item.isExpanded)) {
+    item.isExpanded = false;
+  }
 
-    if (isUndefined(item.isSelected)) {
-      item.isSelected = false;
-    }
+  if (isUndefined(item.isSelected)) {
+    item.isSelected = false;
+  }
 
-    const hasTitle = isString(item?.[titleKey]);
-    const hasChildren = isArray(item?.[childKey]) && !isEmpty(item[childKey]);
+  const hasTitle = isString(item?.[titleKey]);
+  const hasChildren = isArray(item?.[childKey]) && !isEmpty(item[childKey]);
 
-    return (
-      <>
-        {/* Part I. */}
-        {hasTitle && hasChildren && (
-          <ParentItem
-            {...{
-              item,
-              parentContainerStyles,
-              parentTextStyles,
-              onPressCheckbox,
-              showChildren,
-              renderIcon,
-              titleKey,
-              childKey,
-              touchableActiveOpacity,
+  return (
+    <>
+      {/* Part I. */}
+      {hasTitle && hasChildren && (
+        <ParentItem
+          {...{
+            item,
+            parentContainerStyles,
+            parentTextStyles,
+            onPressCheckbox,
+            showChildren,
+            renderIcon,
+            titleKey,
+            childKey,
+            touchableActiveOpacity,
+            renderArrowOpen,
+  renderArrowClosed,
+  renderSelect,
+  renderUnSelect,
+  leftIconStyles,
+  rightIconStyles,
+          }}
+        />
+      )}
+      {/* Part II. */}
+      {hasTitle && isEmpty(item?.[childKey]) && (
+        <ChildItem
+          {...{
+            item,
+            childContainerStyles,
+            childTextStyles,
+            onPressCheckbox,
+            titleKey,
+            onChildPress,
+            renderIcon,
+            touchableActiveOpacity,
+            renderArrowOpen,
+  renderArrowClosed,
+  renderSelect,
+  renderUnSelect,
+  leftIconStyles,
+  rightIconStyles,
+          }}
+        />
+      )}
+      {/* Part III. */}
+      {!isNull(item?.[childKey]) && item.isExpanded && (
+        <View style={styles.innerContainer}>
+          <FlatList
+            data={item[childKey] as Array<TreeDataTypes>}
+            renderItem={({ item: itemName }) => () => {
+              if (!itemName.parent) {
+                itemName.parent = item;
+              }
+              return renderTree({ item: itemName });
             }}
           />
-        )}
-        {/* Part II. */}
-        {hasTitle && isEmpty(item?.[childKey]) && (
-          <ChildItem
-            {...{
-              item,
-              childContainerStyles,
-              childTextStyles,
-              onPressCheckbox,
-              titleKey,
-              onChildPress,
-              renderIcon,
-              touchableActiveOpacity,
-            }}
-          />
-        )}
-        {/* Part III. */}
-        {!isNull(item?.[childKey]) && item.isExpanded && (
-          <View style={styles.innerContainer}>
-            <FlatList
-              data={item[childKey] as Array<TreeDataTypes>}
-              renderItem={({ item: itemName }) => {
-                if (!itemName.parent) {
-                  itemName.parent = item;
-                }
-                return renderTree({ item: itemName });
-              }}
-            />
-          </View>
-        )}
-      </>
-    );
-  };
+        </View>
+      )}
+    </>
+  );
+};
+
 
   /**
    * This is the return function which renders the JSX.

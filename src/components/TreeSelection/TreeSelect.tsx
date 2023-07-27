@@ -7,7 +7,7 @@ import {
   isString,
   isUndefined,
 } from 'lodash';
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { Icons } from '../../assets';
 import { Strings } from '../../constants';

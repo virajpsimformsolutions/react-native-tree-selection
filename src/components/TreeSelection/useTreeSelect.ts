@@ -22,31 +22,39 @@ const useTreeSelect = ({
   /**
    * This @selectAll function will call when selectAll Parents items.
    */
-  const selectAll = useCallback((item: TreeDataTypes) => {
-    // Select all parent items.
-    if (autoSelectParents && item?.parent) {
-      selectParentItems(item?.parent);
-    }
-  },[refresh]);
+  const selectAll = useCallback(
+    (item: TreeDataTypes) => {
+      // Select all parent items.
+      if (autoSelectParents && item?.parent) {
+        selectParentItems(item?.parent);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refresh]
+  );
 
   /**
    * This @onSelectOrUnselect function will call when clicked on checkbox or call when checked checkbox clicked again.
    */
-  const onSelectOrUnselect = useCallback((item: TreeDataTypes, isSelect: boolean) => {
-    item.isSelected = isSelect;
-    selectAll(item);
-    if (
-      autoSelectChildren &&
-      item[childKey] &&
-      isObject(item[childKey]) &&
-      !isNull(item[childKey])
-    ) {
-      (item[childKey] as Array<TreeDataTypes>)?.forEach(
-        (child: TreeDataTypes) => onSelectOrUnselect(child, isSelect)
-      );
-    }
-    reload();
-  }, [refresh]);
+  const onSelectOrUnselect = useCallback(
+    (item: TreeDataTypes, isSelect: boolean) => {
+      item.isSelected = isSelect;
+      selectAll(item);
+      if (
+        autoSelectChildren &&
+        item[childKey] &&
+        isObject(item[childKey]) &&
+        !isNull(item[childKey])
+      ) {
+        (item[childKey] as Array<TreeDataTypes>)?.forEach(
+          (child: TreeDataTypes) => onSelectOrUnselect(child, isSelect)
+        );
+      }
+      reload();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refresh]
+  );
 
   /**
    * This @reload function will call model value update with isExpanded & isSelected value.
@@ -60,19 +68,23 @@ const useTreeSelect = ({
   /**
    * This @selectParentItems function will call when checkbox value is change`s and its update that parent item and reflected in UI.
    */
-  const selectParentItems = useCallback((item: TreeDataTypes) => {
-    const children = (item?.[childKey] as Array<TreeDataTypes>) ?? [];
-    if (children?.length > 0) {
-      const check = (item[childKey] as Array<TreeDataTypes>).filter(
-        (child: TreeDataTypes) => !child?.isSelected
-      );
-      item.isSelected = check.length === 0;
-    }
-    if (item.parent) {
-      selectParentItems(item.parent);
-    }
-    reload();
-  }, [refresh]);
+  const selectParentItems = useCallback(
+    (item: TreeDataTypes) => {
+      const children = (item?.[childKey] as Array<TreeDataTypes>) ?? [];
+      if (children?.length > 0) {
+        const check = (item[childKey] as Array<TreeDataTypes>).filter(
+          (child: TreeDataTypes) => !child?.isSelected
+        );
+        item.isSelected = check.length === 0;
+      }
+      if (item.parent) {
+        selectParentItems(item.parent);
+      }
+      reload();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refresh]
+  );
 
   /**
    * This @selectChildrenItems function will call when children's value update and reflected in UI.
@@ -93,23 +105,31 @@ const useTreeSelect = ({
    *
    * It will manipulate the @boolean isExpanded key.
    */
-  const showChildren = useCallback((item: TreeDataTypes) => {
-    item.isExpanded = !item?.isExpanded;
-    onParentPress(item);
-    reload();
-  },[refresh]);
+  const showChildren = useCallback(
+    (item: TreeDataTypes) => {
+      item.isExpanded = !item?.isExpanded;
+      onParentPress(item);
+      reload();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refresh]
+  );
 
-  const onPressCheckbox = useCallback((item: TreeDataTypes) => {
-    if (!item?.isSelected && autoExpandable) {
-      item.isExpanded = !item?.isSelected;
-    }
-    if (!item?.isSelected) {
-      onSelectOrUnselect(item, true);
-    } else {
-      onSelectOrUnselect(item, false);
-    }
-    onCheckBoxPress(selectItem);
-  }, [refresh]);
+  const onPressCheckbox = useCallback(
+    (item: TreeDataTypes) => {
+      if (!item?.isSelected && autoExpandable) {
+        item.isExpanded = !item?.isSelected;
+      }
+      if (!item?.isSelected) {
+        onSelectOrUnselect(item, true);
+      } else {
+        onSelectOrUnselect(item, false);
+      }
+      onCheckBoxPress(selectItem);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refresh]
+  );
 
   return {
     selectAll,

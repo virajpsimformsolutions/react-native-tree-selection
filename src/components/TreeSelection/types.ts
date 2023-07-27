@@ -70,18 +70,15 @@ export interface ChildItemTypes {
   onPressCheckbox: (item: TreeDataTypes) => void;
   titleKey: string;
   onChildPress: (item: TreeDataTypes) => void;
-  renderIcon: (
-    isSelected: boolean,
-    type?: string,
-  ) => JSX.Element;
+  renderIcon: (isSelected: boolean, type?: string) => JSX.Element;
   touchableActiveOpacity: number;
 }
 
 export type InnerFlatListTypes = {
   itemSelf: TreeDataTypes;
   childKey: string;
-  renderItem: any;
-}
+  renderOtherItem: any;
+};
 
 export interface ParentItemTypes {
   item: TreeDataTypes;
@@ -89,10 +86,7 @@ export interface ParentItemTypes {
   parentTextStyles: StyleProp<TextStyle>;
   onPressCheckbox: (item: TreeDataTypes) => void;
   showChildren: (item: TreeDataTypes) => void;
-  renderIcon: (
-    isSelected: boolean,
-    type?: string,
-  ) => JSX.Element;
+  renderIcon: (isSelected: boolean, type?: string) => JSX.Element;
   titleKey: string;
   childKey: string;
   touchableActiveOpacity: number;

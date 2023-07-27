@@ -26,94 +26,88 @@ const CustomImage = React.memo(({ source, style }: CustomImageProps) => {
   return <Image source={source} style={[styles.iconView, style]} />;
 });
 
-const ParentItem = (
-  ({
-    item,
-    parentContainerStyles,
-    parentTextStyles,
-    onPressCheckbox,
-    showChildren,
-    renderIcon,
-    titleKey,
-    childKey,
-    touchableActiveOpacity,
-  }: ParentItemTypes) => (
-    <View style={styles.renderContainer}>
-      <TouchableOpacity
-        activeOpacity={touchableActiveOpacity}
-        testID={`${item[titleKey]}-parent`}
-        onPress={() => showChildren(item)}
-        style={parentContainerStyles ?? styles.parentStyles}>
-        <TouchableOpacity
-          activeOpacity={touchableActiveOpacity}
-          testID={`${item[titleKey]}-press`}
-          onPress={() => {
-            onPressCheckbox(item);
-          }}
-          style={styles.chevronContainer}>
-          {renderIcon(item?.isSelected ?? false, 'child')}
-        </TouchableOpacity>
-        <Text style={[styles.text, parentTextStyles]}>
-          {item[titleKey] as string}
-        </Text>
-        {Array.isArray(item[childKey]) &&
-          (item[childKey] as Array<TreeDataTypes>)?.length > 0 && (
-            <View style={styles.chevronContainer}>
-              {renderIcon(item?.isExpanded ?? false)}
-            </View>
-          )}
-      </TouchableOpacity>
-    </View>
-  )
-);
-
-const ChildItem = (
-  ({
-    item,
-    childContainerStyles,
-    childTextStyles,
-    onPressCheckbox,
-    titleKey,
-    onChildPress,
-    renderIcon,
-    touchableActiveOpacity,
-  }: ChildItemTypes) => (
+const ParentItem = ({
+  item,
+  parentContainerStyles,
+  parentTextStyles,
+  onPressCheckbox,
+  showChildren,
+  renderIcon,
+  titleKey,
+  childKey,
+  touchableActiveOpacity,
+}: ParentItemTypes) => (
+  <View style={styles.renderContainer}>
     <TouchableOpacity
       activeOpacity={touchableActiveOpacity}
-      testID={`${item[titleKey]}-child`}
-      style={[styles.childrenContainerStyles, childContainerStyles]}
-      onPress={() => onChildPress(item)}>
+      testID={`${item[titleKey]}-parent`}
+      onPress={() => showChildren(item)}
+      style={parentContainerStyles ?? styles.parentStyles}>
       <TouchableOpacity
         activeOpacity={touchableActiveOpacity}
+        testID={`${item[titleKey]}-press`}
         onPress={() => {
           onPressCheckbox(item);
         }}
-        testID={`${item[titleKey]}-press`}
         style={styles.chevronContainer}>
         {renderIcon(item?.isSelected ?? false, 'child')}
       </TouchableOpacity>
-      <Text style={[styles.text, childTextStyles]}>
+      <Text style={[styles.text, parentTextStyles]}>
         {item[titleKey] as string}
       </Text>
+      {Array.isArray(item[childKey]) &&
+        (item[childKey] as Array<TreeDataTypes>)?.length > 0 && (
+          <View style={styles.chevronContainer}>
+            {renderIcon(item?.isExpanded ?? false)}
+          </View>
+        )}
     </TouchableOpacity>
-  )
+  </View>
 );
 
-const InnerFlatList = (
-  ({
-    itemSelf,
-    childKey,
-    renderItem
-  }: InnerFlatListTypes) => (
-    <View style={styles.innerContainer}>
-        <FlatList
-              data={itemSelf[childKey] as Array<TreeDataTypes>}
-              renderItem={({ item }: { item: TreeDataTypes }) => {
-                return renderItem(item, itemSelf)
-              }}
-            />
-          </View>
-  )
+const ChildItem = ({
+  item,
+  childContainerStyles,
+  childTextStyles,
+  onPressCheckbox,
+  titleKey,
+  onChildPress,
+  renderIcon,
+  touchableActiveOpacity,
+}: ChildItemTypes) => (
+  <TouchableOpacity
+    activeOpacity={touchableActiveOpacity}
+    testID={`${item[titleKey]}-child`}
+    style={[styles.childrenContainerStyles, childContainerStyles]}
+    onPress={() => onChildPress(item)}>
+    <TouchableOpacity
+      activeOpacity={touchableActiveOpacity}
+      onPress={() => {
+        onPressCheckbox(item);
+      }}
+      testID={`${item[titleKey]}-press`}
+      style={styles.chevronContainer}>
+      {renderIcon(item?.isSelected ?? false, 'child')}
+    </TouchableOpacity>
+    <Text style={[styles.text, childTextStyles]}>
+      {item[titleKey] as string}
+    </Text>
+  </TouchableOpacity>
+);
+
+const InnerFlatList = ({
+  itemSelf,
+  childKey,
+  renderOtherItem,
+}: InnerFlatListTypes) => (
+  <View style={styles.innerContainer}>
+    <FlatList
+      data={itemSelf[childKey] as Array<TreeDataTypes>}
+      renderItem={({ item }: { item: TreeDataTypes }) => {
+        return renderOtherItem(item, itemSelf);
+      }}
+    />
+  </View>
 );
 
 const TreeSelect = ({
@@ -198,65 +192,77 @@ const TreeSelect = ({
    *               All the styling between @children and @parent goes here.
    */
 
-  const renderItem = useCallback((item: TreeDataTypes, itemData: TreeDataTypes) => {
-    if (!item.parent) {
-      item.parent = itemData;
-    }
-    return renderTree({ item });
-  },[refresh]);
+  const renderOtherItem = useCallback(
+    (item: TreeDataTypes, itemData: TreeDataTypes) => {
+      if (!item.parent) {
+        item.parent = itemData;
+      }
+      return renderTree({ item });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refresh]
+  );
 
-  const renderTree = ({ item }: { item: TreeDataTypes }) => {
-    if (isUndefined(item.isExpanded)) {
-      item.isExpanded = false;
-    }
+  const renderTree = useCallback(
+    ({ item }: { item: TreeDataTypes }) => {
+      if (isUndefined(item.isExpanded)) {
+        item.isExpanded = false;
+      }
 
-    if (isUndefined(item.isSelected)) {
-      item.isSelected = false;
-    }
+      if (isUndefined(item.isSelected)) {
+        item.isSelected = false;
+      }
 
-    const hasTitle = isString(item?.[titleKey]);
-    const hasChildren = isArray(item?.[childKey]) && !isEmpty(item[childKey]);
+      const hasTitle = isString(item?.[titleKey]);
+      const hasChildren = isArray(item?.[childKey]) && !isEmpty(item[childKey]);
 
-    return (
-      <>
-        {/* Part I. */}
-        {hasTitle && hasChildren && (
-          <ParentItem
-            {...{
-              item,
-              parentContainerStyles,
-              parentTextStyles,
-              onPressCheckbox,
-              showChildren,
-              renderIcon,
-              titleKey,
-              childKey,
-              touchableActiveOpacity,
-            }}
-          />
-        )}
-        {/* Part II. */}
-        {hasTitle && isEmpty(item?.[childKey]) && (
-          <ChildItem
-            {...{
-              item,
-              childContainerStyles,
-              childTextStyles,
-              onPressCheckbox,
-              titleKey,
-              onChildPress,
-              renderIcon,
-              touchableActiveOpacity,
-            }}
-          />
-        )}
-        {/* Part III. */}
-        {!isNull(item?.[childKey]) && item.isExpanded && (
-          <InnerFlatList itemSelf={item} childKey={childKey} renderItem={renderItem} />
-        )}
-      </>
-    );
-  };
+      return (
+        <>
+          {/* Part I. */}
+          {hasTitle && hasChildren && (
+            <ParentItem
+              {...{
+                item,
+                parentContainerStyles,
+                parentTextStyles,
+                onPressCheckbox,
+                showChildren,
+                renderIcon,
+                titleKey,
+                childKey,
+                touchableActiveOpacity,
+              }}
+            />
+          )}
+          {/* Part II. */}
+          {hasTitle && isEmpty(item?.[childKey]) && (
+            <ChildItem
+              {...{
+                item,
+                childContainerStyles,
+                childTextStyles,
+                onPressCheckbox,
+                titleKey,
+                onChildPress,
+                renderIcon,
+                touchableActiveOpacity,
+              }}
+            />
+          )}
+          {/* Part III. */}
+          {!isNull(item?.[childKey]) && item.isExpanded && (
+            <InnerFlatList
+              itemSelf={item}
+              childKey={childKey}
+              renderOtherItem={renderOtherItem}
+            />
+          )}
+        </>
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [onChildPress, onPressCheckbox]
+  );
 
   /**
    * This is the return function which renders the JSX.

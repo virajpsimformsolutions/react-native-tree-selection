@@ -7,7 +7,7 @@ import {
   isString,
   isUndefined,
 } from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { Icons } from '../../assets';
 import { Strings } from '../../constants';
@@ -20,7 +20,6 @@ import type {
   TreeSelectTypes,
 } from './types';
 import useTreeSelect from './useTreeSelect';
-import { useCallback } from 'react';
 
 const CustomImage = React.memo(({ source, style }: CustomImageProps) => {
   return <Image source={source} style={[styles.iconView, style]} />;
@@ -188,7 +187,7 @@ const TreeSelect = ({
     [refresh]
   );
 
-  const renderTree = ({ item }: { item: TreeDataTypes }) => {
+  const renderTree = useCallback(({ item }: { item: TreeDataTypes }) => {
     if (isUndefined(item.isExpanded)) {
       item.isExpanded = false;
     }
@@ -244,7 +243,7 @@ const TreeSelect = ({
         )}
       </>
     );
-  };
+  }, [refresh]);
 
   /**
    * This is the return function which renders the JSX.

@@ -73,20 +73,8 @@ export interface ChildItemTypes {
   renderIcon: (
     isSelected: boolean,
     type?: string,
-    renderSelect?: JSX.Element,
-    renderUnSelect?: JSX.Element,
-    renderArrowOpen?: JSX.Element,
-    renderArrowClosed?: JSX.Element,
-    rightIconStyles?: StyleProp<ImageStyle>,
-    leftIconStyles?: StyleProp<ImageStyle>
   ) => JSX.Element;
   touchableActiveOpacity: number;
-  renderSelect?: JSX.Element;
-  renderUnSelect?: JSX.Element;
-  renderArrowOpen?: JSX.Element;
-  renderArrowClosed?: JSX.Element;
-  rightIconStyles?: StyleProp<ImageStyle>;
-  leftIconStyles?: StyleProp<ImageStyle>;
 }
 
 export interface ParentItemTypes {
@@ -98,22 +86,10 @@ export interface ParentItemTypes {
   renderIcon: (
     isSelected: boolean,
     type?: string,
-    renderSelect?: JSX.Element,
-    renderUnSelect?: JSX.Element,
-    renderArrowOpen?: JSX.Element,
-    renderArrowClosed?: JSX.Element,
-    rightIconStyles?: StyleProp<ImageStyle>,
-    leftIconStyles?: StyleProp<ImageStyle>
   ) => JSX.Element;
   titleKey: string;
   childKey: string;
   touchableActiveOpacity: number;
-  renderSelect?: JSX.Element;
-  renderUnSelect?: JSX.Element;
-  renderArrowOpen?: JSX.Element;
-  renderArrowClosed?: JSX.Element;
-  rightIconStyles?: StyleProp<ImageStyle>;
-  leftIconStyles?: StyleProp<ImageStyle>;
 }
 
 export interface TreeSelectHookTypes {

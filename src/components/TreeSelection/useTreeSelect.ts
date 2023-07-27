@@ -22,17 +22,17 @@ const useTreeSelect = ({
   /**
    * This @selectAll function will call when selectAll Parents items.
    */
-  const selectAll = (item: TreeDataTypes) => {
+  const selectAll = useCallback((item: TreeDataTypes) => {
     // Select all parent items.
     if (autoSelectParents && item?.parent) {
       selectParentItems(item?.parent);
     }
-  };
+  },[refresh]);
 
   /**
    * This @onSelectOrUnselect function will call when clicked on checkbox or call when checked checkbox clicked again.
    */
-  const onSelectOrUnselect = (item: TreeDataTypes, isSelect: boolean) => {
+  const onSelectOrUnselect = useCallback((item: TreeDataTypes, isSelect: boolean) => {
     item.isSelected = isSelect;
     selectAll(item);
     if (
@@ -46,7 +46,7 @@ const useTreeSelect = ({
       );
     }
     reload();
-  };
+  }, [refresh]);
 
   /**
    * This @reload function will call model value update with isExpanded & isSelected value.
@@ -60,7 +60,7 @@ const useTreeSelect = ({
   /**
    * This @selectParentItems function will call when checkbox value is change`s and its update that parent item and reflected in UI.
    */
-  const selectParentItems = (item: TreeDataTypes) => {
+  const selectParentItems = useCallback((item: TreeDataTypes) => {
     const children = (item?.[childKey] as Array<TreeDataTypes>) ?? [];
     if (children?.length > 0) {
       const check = (item[childKey] as Array<TreeDataTypes>).filter(
@@ -72,7 +72,7 @@ const useTreeSelect = ({
       selectParentItems(item.parent);
     }
     reload();
-  };
+  }, [refresh]);
 
   /**
    * This @selectChildrenItems function will call when children's value update and reflected in UI.

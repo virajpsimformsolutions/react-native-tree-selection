@@ -15,6 +15,7 @@ import styles from './styles';
 import type {
   ChildItemTypes,
   CustomImageProps,
+  InnerFlatListTypes,
   ParentItemTypes,
   TreeDataTypes,
   TreeSelectTypes,
@@ -96,6 +97,23 @@ const ChildItem = (
         {item[titleKey] as string}
       </Text>
     </TouchableOpacity>
+  )
+);
+
+const InnerFlatList = (
+  ({
+    itemSelf,
+    childKey,
+    renderItem
+  }: InnerFlatListTypes) => (
+    <View style={styles.innerContainer}>
+        <FlatList
+              data={itemSelf[childKey] as Array<TreeDataTypes>}
+              renderItem={({ item }: { item: TreeDataTypes }) => {
+                return renderItem(item, itemSelf)
+              }}
+            />
+          </View>
   )
 );
 
@@ -235,12 +253,7 @@ const TreeSelect = ({
         )}
         {/* Part III. */}
         {!isNull(item?.[childKey]) && item.isExpanded && (
-          <View style={styles.innerContainer}>
-            <FlatList
-              data={item[childKey] as Array<TreeDataTypes>}
-              renderItem={(selfItem: TreeDataTypes) => renderItem(selfItem, item)}
-            />
-          </View>
+          <InnerFlatList itemSelf={item} childKey={childKey} renderItem={renderItem} />
         )}
       </>
     );

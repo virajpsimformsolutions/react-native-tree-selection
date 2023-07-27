@@ -77,6 +77,12 @@ export interface ChildItemTypes {
   touchableActiveOpacity: number;
 }
 
+export type InnerFlatListTypes = {
+  itemSelf: TreeDataTypes;
+  childKey: string;
+  renderItem: any;
+}
+
 export interface ParentItemTypes {
   item: TreeDataTypes;
   parentContainerStyles: StyleProp<ViewStyle>;

@@ -185,7 +185,7 @@ const TreeSelect = ({
     ({ item }: any) => {
       return renderTree({ item });
     },
-    []
+    [refresh]
   );
 
   const renderTree = ({ item }: { item: TreeDataTypes }) => {

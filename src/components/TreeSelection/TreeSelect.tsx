@@ -20,6 +20,7 @@ import type {
   TreeSelectTypes,
 } from './types';
 import useTreeSelect from './useTreeSelect';
+import useCallback from 'react';
 
 const CustomImage = React.memo(({ source, style }: CustomImageProps) => {
   return <Image source={source} style={[styles.iconView, style]} />;
@@ -180,9 +181,12 @@ const TreeSelect = ({
    *               All the styling between @children and @parent goes here.
    */
 
-  const renderItem = ({ item }: any) => {
-      return renderTree({ item });
-  };
+  const renderItem = useCallback((item: TreeDataTypes, itemData: TreeDataTypes) => {
+    if (!item.parent) {
+      item.parent = itemData;
+    }
+    return renderTree({ item });
+  },[refresh]);
 
   const renderTree = ({ item }: { item: TreeDataTypes }) => {
     if (isUndefined(item.isExpanded)) {
@@ -234,7 +238,7 @@ const TreeSelect = ({
           <View style={styles.innerContainer}>
             <FlatList
               data={item[childKey] as Array<TreeDataTypes>}
-              renderItem={renderItem}
+              renderItem={(selfItem: TreeDataTypes) => renderItem(selfItem, item)}
             />
           </View>
         )}

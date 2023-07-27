@@ -20,6 +20,7 @@ import type {
   TreeSelectTypes,
 } from './types';
 import useTreeSelect from './useTreeSelect';
+import { useCallback } from 'react';
 
 const CustomImage = React.memo(({ source, style }: CustomImageProps) => {
   return <Image source={source} style={[styles.iconView, style]} />;
@@ -179,6 +180,14 @@ const TreeSelect = ({
    *    Part III - If any @Item having children's will call the @RecursiveFunction and re-render FlatList.
    *               All the styling between @children and @parent goes here.
    */
+
+  const renderItem = useCallback(
+    ({ item }: any) => {
+      return renderTree({ item });
+    },
+    []
+  );
+
   const renderTree = ({ item }: { item: TreeDataTypes }) => {
     if (isUndefined(item.isExpanded)) {
       item.isExpanded = false;
@@ -229,12 +238,7 @@ const TreeSelect = ({
           <View style={styles.innerContainer}>
             <FlatList
               data={item[childKey] as Array<TreeDataTypes>}
-              renderItem={({ item: itemName }) => {
-                if (!itemName.parent) {
-                  itemName.parent = item;
-                }
-                return renderTree({ item: itemName });
-              }}
+              renderItem={renderItem}
             />
           </View>
         )}

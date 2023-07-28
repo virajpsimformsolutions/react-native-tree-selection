@@ -273,7 +273,6 @@ const TreeSelect = ({
       data={listData}
       renderItem={renderTree}
       keyExtractor={(_item, index) => index.toString()}
-      extraData={refresh}
     />
   );
 };

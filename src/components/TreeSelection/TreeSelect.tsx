@@ -96,21 +96,16 @@ const ChildItem = ({
 );
 
 const InnerFlatList = React.memo(
-  ({ itemSelf, childKey, renderOtherItem }: InnerFlatListTypes) => {
-    const renderItem = useCallback(({ item }: { item: TreeDataTypes }) => {
-      return renderOtherItem(item, itemSelf);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    return (
-      <View style={styles.innerContainer}>
-        <FlatList
-          data={itemSelf[childKey] as Array<TreeDataTypes>}
-          renderItem={renderItem}
-        />
-      </View>
-    );
-  }
+  ({ itemSelf, childKey, renderOtherItem }: InnerFlatListTypes) => (
+    <View style={styles.innerContainer}>
+      <FlatList
+        data={itemSelf[childKey] as Array<TreeDataTypes>}
+        renderItem={({ item }: { item: TreeDataTypes }) => {
+          return renderOtherItem(item, itemSelf);
+        }}
+      />
+    </View>
+  )
 );
 
 const TreeSelect = ({
@@ -278,7 +273,6 @@ const TreeSelect = ({
       data={listData}
       renderItem={renderTree}
       keyExtractor={(_item, index) => index.toString()}
-      extraData={refresh}
     />
   );
 };
